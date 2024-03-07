@@ -1,0 +1,35 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    padding: 0;
+    margin: 0;
+
+}
+
+header{
+    height: 10vh;
+    width: 100vw;
+    background-color: blue;
+}
+
+#map{
+
+    height: 80vh;
+    width: 80vw;
+    background-color: blueviolet;
+    position: absolute
+}
+
+#mono {
+    height: 80vh;
+    width: 20vw;
+    background-color: aqua;
+    
+}
+
+footer{
+    height: 10vh;
+    width: 100vw;
+    background-color: burlywood;
+}
