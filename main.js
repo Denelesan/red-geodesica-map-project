@@ -42,7 +42,7 @@ function init(){
     }
 
     L.control.layers(baseMaps,{},{
-        collapsed:false
+        collapsed:true
     }).addTo(map)
 
     //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
