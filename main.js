@@ -43,9 +43,10 @@ function init(){
 
     const layerControl = L.control.layers(baseMaps,{},{
         collapsed:true
-    }).addTo(map)
+    })
 
-
+    layerControl.addTo(map)
+    
 
     //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
     document.getElementById("toggleButton").addEventListener("click", function() {
@@ -63,15 +64,19 @@ function init(){
         }
     });
 
-}
+
 
     // FUNCTION TRAER INFO WFS RED GEODESICA
 
     //1.- Se configura variable de WFS a importar
-
-    const urlWFSRedGeodesica = ''+
-                                ''+
-                                ''
+    //http://10.13.5.43:443/geoserver/serviu/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=serviu:vw_vertices_geodesicos_vigentes&outputFormat=application%2Fjson
+    const urlWFSRedGeodesica = 'http://10.13.5.43:443/geoserver/serviu/wfs?' +
+                                'service=wfs&' +
+                                'version=2.0.0&' +
+                                'request=GetFeature&' +
+                                'typeNames=serviu:vw_vertices_geodesicos_vigentes&' +
+                                
+                                'outputFormat=application%2Fjson'
 
     //2.- Functión para gestionar la petición y la respuesta desde un servicio WFS
     function fetchWFSData(url, layerName){
@@ -96,18 +101,21 @@ function init(){
 
     //Función para agregar data de WFS a mapa y layer control.
     function addWFSData (WFSData, layerName){
-        let WFSLayer = L.geojson(WFSData,{
+        let WFSLayer = L.geoJSON(WFSData,{
             onEachFeature: function(feature, layer){
-                layer.bindPopup(feature.properties)
+                
+                layer.bindPopup(feature.properties.estado)
             }
         })
-
+        
+        
         layerControl.addOverlay(WFSLayer, layerName)
 
+        console.log(WFSLayer.getBounds())
+        
     }
 
-
-    async function getRedGeodesica () {
-        const response = await fetch("url");
-        const redGeodesica = response.json();
-    }
+   
+    fetchWFSData(urlWFSRedGeodesica,"Red Geodésica")
+    
+}
