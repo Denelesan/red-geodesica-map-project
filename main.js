@@ -45,6 +45,8 @@ function init(){
         collapsed:true
     }).addTo(map)
 
+
+
     //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
     document.getElementById("toggleButton").addEventListener("click", function() {
         var map = document.getElementById("map");
@@ -62,3 +64,10 @@ function init(){
     });
 
 }
+
+    // FUNCTION TRAER INFO RED GEODESICA
+
+    async function getRedGeodesica () {
+        const response = await fetch("url");
+        const redGeodesica = response.json();
+    }
