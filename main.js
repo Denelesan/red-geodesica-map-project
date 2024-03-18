@@ -41,7 +41,7 @@ function init(){
 
     }
 
-    L.control.layers(baseMaps,{},{
+    const layerControl = L.control.layers(baseMaps,{},{
         collapsed:true
     }).addTo(map)
 
@@ -65,7 +65,47 @@ function init(){
 
 }
 
-    // FUNCTION TRAER INFO RED GEODESICA
+    // FUNCTION TRAER INFO WFS RED GEODESICA
+
+    //1.- Se configura variable de WFS a importar
+
+    const urlWFSRedGeodesica = ''+
+                                ''+
+                                ''
+
+    //2.- Functión para gestionar la petición y la respuesta desde un servicio WFS
+    function fetchWFSData(url, layerName){
+        fetch(url,{
+            method:'GET',
+            mode: 'cors'
+        })
+        .then(function(response){
+            if(response.status ==200){
+                return response.json(response)
+            } else{
+                throw new Error ("Fetch API could not fetch the data")
+            }
+        })
+        .then (function(geojson){
+            addWFSData(geojson,layerName)
+        })
+        .catch(function(error){
+            console.log(error)
+        })
+    }
+
+    //Función para agregar data de WFS a mapa y layer control.
+    function addWFSData (WFSData, layerName){
+        let WFSLayer = L.geojson(WFSData,{
+            onEachFeature: function(feature, layer){
+                layer.bindPopup(feature.properties)
+            }
+        })
+
+        layerControl.addOverlay(WFSLayer, layerName)
+
+    }
+
 
     async function getRedGeodesica () {
         const response = await fetch("url");
