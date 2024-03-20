@@ -141,14 +141,31 @@ function init(){
             console.log(error)
         })
     }
+    
+    const iconRedGeodesica = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [15, 31],
+        iconAnchor: [12, 21],
+        popupAnchor: [1, -34],
+        shadowSize: [31, 31]
+      });
 
+   
     //Función para agregar data de WFS a mapa y layer control.
     function addWFSData (WFSData, layerName){
         let WFSLayer = L.geoJSON(WFSData,{
-            coordsToLatLng: function(coords){
+            /*coordsToLatLng: function(coords){
                 let longlat = (proj4(crsUTM84).inverse([coords[0],coords[1]]))
-                console.log(longlat[1],longlat[0])
+                //console.log(longlat[1],longlat[0])
                 return new L.LatLng(longlat[1],longlat[0])
+            },*/
+            pointToLayer : function(coords){
+                let coordinatesUTM = coords.geometry.coordinates
+                
+                let coordinatesGeographicReverse = (proj4(crsUTM84).inverse([coordinatesUTM[0],coordinatesUTM[1]]))
+                let coordinatesGeographic = [coordinatesGeographicReverse[1],coordinatesGeographicReverse[0]]
+                return L.marker(coordinatesGeographic,{icon: iconRedGeodesica})
             },
             onEachFeature: function(feature, layer){
                
