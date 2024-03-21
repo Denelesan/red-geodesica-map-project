@@ -92,21 +92,33 @@ function init(){
     
 
     //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
-    document.getElementById("toggleButton").addEventListener("click", function() {
-        var map = document.getElementById("map");
-        var mono = document.getElementById("mono");
-        
-        if (mono.style.display === "none" || mono.style.display ==="") {
-            mono.style.display = "inline-block";
-          
-            
-        } else {
-            //map.style.display = "none";
-            mono.style.display = "none";
-           
-        }
-    });
 
+    map.on("popupopen", function(event){
+        document.getElementById("toggleButton").addEventListener("click", function() {
+            var map = document.getElementById("map");
+            var mono = document.getElementById("mono");
+            
+            if (mono.style.display === "none" || mono.style.display ==="") {
+                mono.style.display = "inline-block";
+              
+                
+            } else {
+                //map.style.display = "none";
+                mono.style.display = "none";
+               
+            }
+        });
+
+    })
+    map.on("popupopen", function(e){
+        console.log(e)
+    })
+    map.on("popupclose", function(e){
+        console.log(e)
+    })
+
+
+   
 
 
     // FUNCTION TRAER INFO WFS RED GEODESICA
@@ -151,7 +163,37 @@ function init(){
         shadowSize: [31, 31]
       });
 
-   
+    // Functión para popup tabla de Red geodésica
+
+    function tablaPopUpRedGeodesica(feature, layer) {
+        
+            var popup = L.popup()
+
+            fetch("table.html")
+                .then(response =>{
+                    if (!response.ok){
+                        throw new Error ("No se pudo cargar la plantilla")
+                    }
+                    return response.text()
+                })
+                .then (tableHTML =>{
+                    tableHTML = tableHTML.replace("nombre_punto", feature.properties.nombre_punto);
+                    tableHTML = tableHTML.replace("estado", feature.properties.estado)
+               
+
+                popup.setContent(tableHTML)
+
+                layer.bindPopup(popup)
+                
+                })
+                .catch (error =>{
+                    console.log("Error", error)
+                })
+        
+        
+    }
+
+
     //Función para agregar data de WFS a mapa y layer control.
     function addWFSData (WFSData, layerName){
         let WFSLayer = L.geoJSON(WFSData,{
@@ -167,13 +209,10 @@ function init(){
                 let coordinatesGeographic = [coordinatesGeographicReverse[1],coordinatesGeographicReverse[0]]
                 return L.marker(coordinatesGeographic,{icon: iconRedGeodesica})
             },
-            onEachFeature: function(feature, layer){
-               
-                layer.bindPopup(feature.properties.estado)
-            }
+            onEachFeature: tablaPopUpRedGeodesica
         }).addTo(map)
         
-        
+        console.log(WFSLayer)
         layerControl.addOverlay(WFSLayer, layerName)
         
         
@@ -184,6 +223,7 @@ function init(){
     console.log("Las Coordenadas de 84 son "+proj4(crsUTM84).inverse([342560,6307478]))
 
     fetchWFSData(urlWFSRedGeodesica,"Red Geodésica")
+    
     
    
     map.on("click", function(e){
