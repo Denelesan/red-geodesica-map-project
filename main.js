@@ -91,33 +91,29 @@ function init(){
     layerControl.addTo(map)
     
 
-    //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
+    
 
-    map.on("popupopen", function(event){
-        document.getElementById("toggleButton").addEventListener("click", function() {
-            var map = document.getElementById("map");
+   
+
+    function monoDisplay(){
+        {
+            
             var mono = document.getElementById("mono");
             
             if (mono.style.display === "none" || mono.style.display ==="") {
                 mono.style.display = "inline-block";
-              
+                
                 
             } else {
                 //map.style.display = "none";
                 mono.style.display = "none";
-               
+                
             }
-        });
-
-    })
-    map.on("popupopen", function(e){
-        console.log(e)
-    })
-    map.on("popupclose", function(e){
-        console.log(e)
-    })
+        }
+    }
 
 
+    
    
 
 
@@ -157,18 +153,22 @@ function init(){
     const iconRedGeodesica = new L.Icon({
         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [15, 31],
-        iconAnchor: [12, 21],
+        iconSize: [15, 25],
+        iconAnchor: [18, 18],
         popupAnchor: [1, -34],
         shadowSize: [31, 31]
       });
 
     // Functión para popup tabla de Red geodésica
-
+    var popup = L.popup() 
     function tablaPopUpRedGeodesica(feature, layer) {
+            
+                  
+           
+              
         
-            var popup = L.popup()
-
+           
+            
             fetch("table.html")
                 .then(response =>{
                     if (!response.ok){
@@ -178,19 +178,34 @@ function init(){
                 })
                 .then (tableHTML =>{
                     tableHTML = tableHTML.replace("nombre_punto", feature.properties.nombre_punto);
-                    tableHTML = tableHTML.replace("estado", feature.properties.estado)
+                    tableHTML = tableHTML.replace("estado", feature.properties.estado);
+                    tableHTML = tableHTML.replace("este", feature.properties.este +" m");
+                    tableHTML = tableHTML.replace("norte", feature.properties.norte+ " m");
+                    tableHTML = tableHTML.replace("cota", feature.properties.cota_nmm +" m");
                
 
                 popup.setContent(tableHTML)
-
+                
+                
+                
+                
                 layer.bindPopup(popup)
                 
+                
+        
+                //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
+                map.on("popupopen", function(event){
+                    var toggleButton = document.getElementById("toggleButton")
+            
+                    toggleButton.addEventListener("click", monoDisplay);
+            
+                });
                 })
                 .catch (error =>{
                     console.log("Error", error)
                 })
-        
-        
+            
+            
     }
 
 
