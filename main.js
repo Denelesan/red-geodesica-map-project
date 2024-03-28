@@ -90,7 +90,16 @@ function init(){
 
     layerControl.addTo(map)
     
-
+    var searchControl = L.esri.Geocoding.geosearch({
+        position: 'topleft',
+        placeholder: 'Ingresa tu dirección',
+        providers: [
+            L.esri.Geocoding.arcgisOnlineProvider({
+              // API Key to be passed to the ArcGIS Online Geocoding Service
+              apikey: 'AAPK33278ae79220431da7d58b5529aa5e13dyVeaAC8qyhFH0s5uNBUXU1s1MeSbOWgn6-DMco7Vw6ocNfzq-ZfstbUQhIiNRQR'
+            })
+          ]
+    }).addTo(map)
     
 
    
