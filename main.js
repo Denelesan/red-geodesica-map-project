@@ -170,20 +170,15 @@ function init(){
 
     // Functión para popup tabla de Red geodésica
     var popup = L.popup() 
-    function tablaPopUpRedGeodesica(feature, layer) {
-            
-                  
-           
-              
-        
-           
-            
+    function tablaPopUpRedGeodesica(feature, layer) {                                
+        layer.on('click', function(e) {    
             fetch("table.html")
                 .then(response =>{
                     if (!response.ok){
                         throw new Error ("No se pudo cargar la plantilla")
                     }
                     return response.text()
+                    
                 })
                 .then (tableHTML =>{
                     tableHTML = tableHTML.replace("nombre_punto", feature.properties.nombre_punto);
@@ -192,29 +187,28 @@ function init(){
                     tableHTML = tableHTML.replace("norte", feature.properties.norte+ " m");
                     tableHTML = tableHTML.replace("cota", feature.properties.cota_nmm +" m");
                
-
+                
                 popup.setContent(tableHTML)
                 
+                popup.setLatLng(e.latlng);
                 
-                
-                
-                layer.bindPopup(popup)
-                
-                
+                popup.openOn(map)
+                                              
         
                 //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
-                map.on("popupopen", function(event){
+                
                     var toggleButton = document.getElementById("toggleButton")
             
                     toggleButton.addEventListener("click", monoDisplay);
             
-                });
+                
+                
                 })
                 .catch (error =>{
                     console.log("Error", error)
                 })
             
-            
+        })     
     }
 
 
@@ -235,8 +229,7 @@ function init(){
             },
             onEachFeature: tablaPopUpRedGeodesica
         }).addTo(map)
-        
-        console.log(WFSLayer)
+               
         layerControl.addOverlay(WFSLayer, layerName)
         
         
