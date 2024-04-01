@@ -100,6 +100,19 @@ function init(){
             })
           ]
     }).addTo(map)
+
+    var osmGeocoder = new L.Control.OSMGeocoder({
+        placeholder:"Ingresa tu dirección",
+        collapsed:true
+    })
+
+    //map.addControl(osmGeocoder)
+
+    var leafletControlGeocoder = L.Control.geocoder({
+        placeholder:"Ingresa tu dirección"
+    })
+
+    leafletControlGeocoder.addTo(map)
     
 
    
