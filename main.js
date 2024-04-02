@@ -199,6 +199,10 @@ function init(){
                     tableHTML = tableHTML.replace("este", feature.properties.este +" m");
                     tableHTML = tableHTML.replace("norte", feature.properties.norte+ " m");
                     tableHTML = tableHTML.replace("cota", feature.properties.cota_nmm +" m");
+                    tableHTML = tableHTML.replace("alturaElipsoidal", feature.properties.altura_elipsoidal +" m");
+                    tableHTML = tableHTML.replace("alturaOrtometrica", feature.properties.altura_geoidal +" m");
+                    tableHTML = tableHTML.replace("sistemaDeReferencia", feature.properties.sistema_referencia);
+                   
                
                 
                 popup.setContent(tableHTML)
@@ -207,7 +211,6 @@ function init(){
                 
                 popup.openOn(map)
                                               
-        
                 //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
                 
                     var toggleButton = document.getElementById("toggleButton")

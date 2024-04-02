@@ -48,10 +48,27 @@ main{
     
     justify-content: center;
     align-items: center;
-    display: none; /* Comienza oculto */
-   
-    
- 
+    display: none; /* Comienza oculto */ 
     
 }
 
+.leaflet-popup-content{
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+#atributeTable{
+    position: relative;
+    display: inline-block;
+    
+}
+#toggleButton{
+    
+}
+
+#button-separator{
+    position: absolute;
+    display: inline-block;
+    margin: 5;
+}
