@@ -52,23 +52,23 @@ main{
     
 }
 
-.leaflet-popup-content{
-    display: flex;
-    justify-content: center;
-    position: relative;
+.leaflet-popup-content-wrapper{
+    
 }
 
 #atributeTable{
-    position: relative;
-    display: inline-block;
+   
+    display: block;
     
 }
 #toggleButton{
-    
+    display: block;  
 }
 
 #button-separator{
-    position: absolute;
-    display: inline-block;
-    margin: 5;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
 }
