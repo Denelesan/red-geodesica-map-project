@@ -219,7 +219,14 @@ function init(){
             
                 
                 
+                map.on("popupclose", function(e){
+                    
+                    
+                    if (mono.style.display === "inline-block")
+                        {monoDisplay()}
+                    })
                 })
+                
                 .catch (error =>{
                     console.log("Error", error)
                 })
