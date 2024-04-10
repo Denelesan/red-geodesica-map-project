@@ -90,7 +90,7 @@ function init(){
 
     layerControl.addTo(map)
     
-    var searchControl = L.esri.Geocoding.geosearch({
+    /*var searchControl = L.esri.Geocoding.geosearch({
         position: 'topleft',
         placeholder: 'Ingresa tu dirección',
         providers: [
@@ -99,17 +99,19 @@ function init(){
               apikey: 'AAPK33278ae79220431da7d58b5529aa5e13dyVeaAC8qyhFH0s5uNBUXU1s1MeSbOWgn6-DMco7Vw6ocNfzq-ZfstbUQhIiNRQR'
             })
           ]
-    }).addTo(map)
+    }).addTo(map)*/
 
-    var osmGeocoder = new L.Control.OSMGeocoder({
+    /*var osmGeocoder = new L.Control.OSMGeocoder({
         placeholder:"Ingresa tu dirección",
-        collapsed:true
+        collapsed:true,
+        position: 'topleft'
     })
 
-    //map.addControl(osmGeocoder)
+    //map.addControl(osmGeocoder)*/
 
     var leafletControlGeocoder = L.Control.geocoder({
-        placeholder:"Ingresa tu dirección"
+        placeholder:"Ingresa tu dirección",
+        position: 'topleft'
     })
 
     leafletControlGeocoder.addTo(map)
