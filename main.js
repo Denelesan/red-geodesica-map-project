@@ -90,7 +90,7 @@ function init(){
 
     layerControl.addTo(map)
     
-    /*var searchControl = L.esri.Geocoding.geosearch({
+    var searchControl = L.esri.Geocoding.geosearch({
         position: 'topleft',
         placeholder: 'Ingresa tu dirección',
         providers: [
@@ -99,19 +99,17 @@ function init(){
               apikey: 'AAPK33278ae79220431da7d58b5529aa5e13dyVeaAC8qyhFH0s5uNBUXU1s1MeSbOWgn6-DMco7Vw6ocNfzq-ZfstbUQhIiNRQR'
             })
           ]
-    }).addTo(map)*/
+    }).addTo(map)
 
-    /*var osmGeocoder = new L.Control.OSMGeocoder({
+    var osmGeocoder = new L.Control.OSMGeocoder({
         placeholder:"Ingresa tu dirección",
-        collapsed:true,
-        position: 'topleft'
+        collapsed:true
     })
 
-    //map.addControl(osmGeocoder)*/
+    //map.addControl(osmGeocoder)
 
     var leafletControlGeocoder = L.Control.geocoder({
-        placeholder:"Ingresa tu dirección",
-        position: 'topleft'
+        placeholder:"Ingresa tu dirección"
     })
 
     leafletControlGeocoder.addTo(map)
@@ -146,7 +144,7 @@ function init(){
     //1.- Se configura variable de WFS a importar
     //http://10.13.5.43:443/geoserver/serviu/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=serviu:vw_vertices_geodesicos_vigentes&outputFormat=application%2Fjson
 
-    const urlWFSRedGeodesica = 'http://10.13.5.43:443/geoserver/serviu/wfs?' +
+    const urlWFSRedGeodesica = 'http://163.247.53.138:443/geoserver/serviu/wfs?' +
                                 'service=wfs&' +
                                 'version=2.0.0&' +
                                 'request=GetFeature&' +
