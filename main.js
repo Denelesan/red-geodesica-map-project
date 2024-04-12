@@ -90,7 +90,7 @@ function init(){
 
     layerControl.addTo(map)
     
-    var searchControl = L.esri.Geocoding.geosearch({
+    /*var searchControl = L.esri.Geocoding.geosearch({
         position: 'topleft',
         placeholder: 'Ingresa tu dirección',
         providers: [
@@ -106,10 +106,11 @@ function init(){
         collapsed:true
     })
 
-    //map.addControl(osmGeocoder)
+    //map.addControl(osmGeocoder)*/
 
     var leafletControlGeocoder = L.Control.geocoder({
-        placeholder:"Ingresa tu dirección"
+        placeholder:"Ingresa tu dirección",
+        position: 'topleft',
     })
 
     leafletControlGeocoder.addTo(map)
@@ -269,4 +270,21 @@ function init(){
     map.on("click", function(e){
         console.log(proj4(crsUTM84,[e.latlng.lng,e.latlng.lat]))
     })
+
+    //Crear Evento doble Click crea maker
+    map.on("dblclick", function (e){
+        console.log(e.latlng)
+    })
+
+    //Side Control
+    var sideControl = L.control({});
+
+    sideControl.onAdd = function(map){
+        var div = L.DomUtil.create('div', 'info');
+        div.innerHTML +=
+        '<h3>Control de Opacidad</h3><input id="slide" type="range" min="0" max="1" step="0.1" value="1"onchange="updateOpacity(this.value)">';
+        return div
+    }
+
+    sideControl.addTo(map)
 }
