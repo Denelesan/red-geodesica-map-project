@@ -50,7 +50,7 @@ function init(){
 
     // Main Function
 
-    const map = new L.map("map", {
+    var map = new L.map("map", {
         center: [-33.45, -70.65],
         //center: [40.965, -5.664],
         //center:[6307478,342560],
@@ -60,6 +60,7 @@ function init(){
         layers: smoothDarkMap,
         //crs: crs32719
     })
+    map.doubleClickZoom.disable()
 
     var layerRasterIgn = new L.tileLayer.wms("http://www.ign.es/wms-inspire/mapa-raster",
     {
@@ -90,7 +91,7 @@ function init(){
 
     layerControl.addTo(map)
     
-    var searchControl = L.esri.Geocoding.geosearch({
+    /*var searchControl = L.esri.Geocoding.geosearch({
         position: 'topleft',
         placeholder: 'Ingresa tu dirección',
         providers: [
@@ -104,17 +105,17 @@ function init(){
     var osmGeocoder = new L.Control.OSMGeocoder({
         placeholder:"Ingresa tu dirección",
         collapsed:true
-    })
+    })*/
 
     //map.addControl(osmGeocoder)
 
     var leafletControlGeocoder = L.Control.geocoder({
-        placeholder:"Ingresa tu dirección"
+        placeholder:"Ingresa tu dirección",
+        position: "topleft"
     })
 
     leafletControlGeocoder.addTo(map)
     
-
    
 
     function monoDisplay(){
@@ -134,10 +135,38 @@ function init(){
         }
     }
 
+    function buscarLocalizacion(e) {
+        var mydate = new Date(e.timestamp);
+        L.marker(e.latlng).addTo(map).bindPopup(mydate.toString());
+        }
+        function errorLocalizacion(e) {
+        alert("No es posible encontrar su ubicación. Es posible que tenga que activar la Geolocation.");
+}
+        map.on('locationerror', errorLocalizacion);
+        map.on('locationfound', buscarLocalizacion);
+        map.locate({});
 
-    
+    function findNearestVertex(latlng){
+        
+    }
    
+    L.circle([-33.40624369822614,-70.37833611106949],{radius:200}).addTo(map)
 
+    L.Routing.control({
+        waypoints: [
+          L.latLng(-33.40624369822614, -70.37833611106949),
+          L.latLng(-33.36293762452506, -70.50011437530891)
+        ],
+        routeWhileDragging: true,
+        showAlternatives: true,
+        altLineOptions: {
+                  styles: [
+                        {color: 'black', opacity: 0.2, weight: 9},
+                        {color: 'white', opacity: 0.8, weight: 6},
+                        {color: 'blue', opacity: 0.5, weight: 2}
+]
+                  },
+      }).addTo(map);
 
     // FUNCTION TRAER INFO WFS RED GEODESICA
 
@@ -152,6 +181,7 @@ function init(){
                                 'outputFormat=application%2Fjson'
 
     //2.- Functión para gestionar la petición y la respuesta desde un servicio WFS
+    var WFSLayer;
     function fetchWFSData(url, layerName){
         fetch(url,{
             method:'GET',
@@ -159,6 +189,7 @@ function init(){
         })
         .then(function(response){
             if(response.status ==200){
+                
                 return response.json(response)
             } else{
                 throw new Error ("Fetch API could not fetch the data")
@@ -195,6 +226,7 @@ function init(){
                 })
                 .then (tableHTML =>{
                     tableHTML = tableHTML.replace("nombre_punto", feature.properties.nombre_punto);
+                    tableHTML = tableHTML.replace("vertice_intervisible", "No cuenta");
                     tableHTML = tableHTML.replace("estado", feature.properties.estado);
                     tableHTML = tableHTML.replace("este", feature.properties.este +" m");
                     tableHTML = tableHTML.replace("norte", feature.properties.norte+ " m");
@@ -236,8 +268,9 @@ function init(){
 
 
     //Función para agregar data de WFS a mapa y layer control.
+    
     function addWFSData (WFSData, layerName){
-        let WFSLayer = L.geoJSON(WFSData,{
+        WFSLayer = L.geoJSON(WFSData,{
             /*coordsToLatLng: function(coords){
                 let longlat = (proj4(crsUTM84).inverse([coords[0],coords[1]]))
                 //console.log(longlat[1],longlat[0])
@@ -252,21 +285,124 @@ function init(){
             },
             onEachFeature: tablaPopUpRedGeodesica
         }).addTo(map)
-               
+        var currentZoom = map.getZoom();
+        console.log(currentZoom)       
         layerControl.addOverlay(WFSLayer, layerName)
-        
-        
+        configureSearchControl()
+       
     }
 
     
+    
 
-    console.log("Las Coordenadas de 84 son "+proj4(crsUTM84).inverse([342560,6307478]))
+    //console.log("Las Coordenadas de 84 son "+proj4(crsUTM84).inverse([342560,6307478]))
 
     fetchWFSData(urlWFSRedGeodesica,"Red Geodésica")
     
     
    
-    map.on("click", function(e){
+   /* map.on("click", function(e){
         console.log(proj4(crsUTM84,[e.latlng.lng,e.latlng.lat]))
+    })*/
+
+    //Función para crear marker con evento de doble click en el mapa
+
+    var popupUbicacionProyecto 
+    var markerDblClick = null;
+    var markerData
+    map.on("dblclick", function(e){
+       
+        if (markerDblClick && markerDblClick.getLatLng()){
+            markerDblClick.remove()
+        }
+        
+        
+        var coordinateGeographicDblClick = e.latlng
+        markerData={
+            title:"Ubicación del Proyecto",
+            ubicacion: `<b>Lat:</b>${coordinateGeographicDblClick.lat} <b>Long:</b>${coordinateGeographicDblClick.lng}`
+        }
+        popupUbicacionProyecto = `
+        <div>
+            
+            <div id="popupUbicacionProyecto">
+                <b>${markerData.title}</b>
+            </div>
+            <p>${markerData.ubicacion}</p>
+            
+            <div id="button-separator">
+            <button  type="button" class="btn btn-primary">Vértice más cercano</button>
+            </div>
+        </div>`;
+        //console.log(markerData)
+        markerDblClick = L.marker(coordinateGeographicDblClick)
+        markerDblClick.bindPopup(popupUbicacionProyecto).addTo(map)
+        markerDblClick.openPopup()
+        
     })
+
+     // search para buscar en capas de vértices
+    var circleLocationFound
+    var zoomToShowTooltip = 18
+    var markerLocationFound
+    function configureSearchControl(){
+        if(WFSLayer){
+            controlSearch =  new L.Control.Search({
+                position:'topright',
+                textPlaceholder: "Busca un vértice Geodésico",
+                
+                layer:WFSLayer,
+                propertyName: 'nombre_punto',
+                initial:false,
+                zoom:zoomToShowTooltip,
+                marker:false
+            })
+            map.addControl(controlSearch)
+
+            controlSearch.on('search:locationfound', function(e){
+                let latLocationFound=e.layer._latlng.lat
+                let lngLocationFound=e.layer._latlng.lng
+                markerLocationFound = L.marker([latLocationFound,lngLocationFound],{icon:L.divIcon({className:'marker-transparent'})})
+                var textLocationFound = `<b>${e.text}</b>`
+                console.log(e)
+                circleLocationFound = L.circle([latLocationFound,lngLocationFound], {radius:100})
+                markerLocationFound.addTo(map)
+                markerLocationFound.bindTooltip(textLocationFound,{ permanent: true, className: "map-label", offset: [20, 0] }).openTooltip()
+                circleLocationFound.addTo(map)
+            })
+
+            
+        }else{
+            console.log("WFSLayer is not defined yet")
+        }
+    }
+    map.on('moveend', function(){
+        if(circleLocationFound){
+            let boundsNow= map.getBounds();
+        
+            if(!boundsNow.contains(circleLocationFound.getLatLng())){
+                circleLocationFound.remove()
+                markerLocationFound.unbindTooltip()
+                markerLocationFound.remove()
+            }
+        }
+
+    /*map.on('zoomend', function (e){
+        var currentZoom = map.getZoom()
+        
+        if(currentZoom >=zoomToShowTooltip){
+            console.log("hola")
+            WFSLayer.eachLayer(function(layer){
+                
+                var namePoint = layer.properties 
+                console.log(layer)
+                layer.bindTooltip("hola",{ permanent: true, className: "map-label", offset: [0, 0] }).openTooltip()
+            })
+        }
+    })*/
+        
+    })
+    
+     
+   
 }
