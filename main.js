@@ -148,31 +148,48 @@ function init(){
 
 
    // FUNCION DE VERTICE MAS CERCANO
+   //var puntoMasCercano
+   var vertexLocationFound;
+   var markerVertexLocationFound;
     function findNearestVertex(coord) {
+        if(vertexLocationFound){
+            vertexLocationFound.remove()
+            markerVertexLocationFound.remove()
+        }
         var puntoMasCercano = L.GeometryUtil.closestLayer(map, WFSLayer.getLayers(), coord)
-        circleLocationFound = L.circle(puntoMasCercano.latlng, {radius:100})
+        vertexLocationFound = L.circle(puntoMasCercano.latlng, {radius:100})
         console.log(puntoMasCercano)
-        circleLocationFound.addTo(map)
+        markerVertexLocationFound = L.marker(puntoMasCercano.latlng,{icon:L.divIcon({className:'marker-transparent'})})
+        var textLocationFound = `<b>${puntoMasCercano.layer.feature.properties.nombre_punto}</b>`
+        
+        
+        markerVertexLocationFound.addTo(map)
+        markerVertexLocationFound.bindTooltip(textLocationFound,{ permanent: true, className: "map-label", offset: [20, 0] }).openTooltip()
+        vertexLocationFound.addTo(map)
+        //rutaMasCercana( puntoMasCercano.latlng,coord)
         map.flyTo(puntoMasCercano.latlng, 17)
 
     }
-   
+  
+    function rutaMasCercana (ubicacionProyecto, verticeMasCercano){
+        L.Routing.control({
+            waypoints: [
+                ubicacionProyecto,
+                verticeMasCercano
+            ],
+            routeWhileDragging: true,
+            showAlternatives: true,
+            altLineOptions: {
+                      styles: [
+                            {color: 'black', opacity: 0.2, weight: 9},
+                            {color: 'white', opacity: 0.8, weight: 6},
+                            {color: 'blue', opacity: 0.5, weight: 2}
+    ]
+                      },
+          }).addTo(map);
 
-    L.Routing.control({
-        waypoints: [
-          L.latLng(-33.40624369822614, -70.37833611106949),
-          L.latLng(-33.36293762452506, -70.50011437530891)
-        ],
-        routeWhileDragging: true,
-        showAlternatives: true,
-        altLineOptions: {
-                  styles: [
-                        {color: 'black', opacity: 0.2, weight: 9},
-                        {color: 'white', opacity: 0.8, weight: 6},
-                        {color: 'blue', opacity: 0.5, weight: 2}
-]
-                  },
-      })//.addTo(map);
+    }
+    
 
     // FUNCTION TRAER INFO WFS RED GEODESICA
 
@@ -219,7 +236,7 @@ function init(){
       });
 
     // Functión para popup tabla de Red geodésica
-    var popup = L.popup() 
+    var popup = L.popup()
     function tablaPopUpRedGeodesica(feature, layer) {                                
         layer.on('click', function(e) {    
             fetch("table.html")
@@ -248,6 +265,8 @@ function init(){
                 popup.setLatLng(e.latlng);
                 
                 popup.openOn(map)
+
+                
                                               
                 //PARA MOSTRAR U OCULTAR SECCIÓN DE MONOGRAFÍA
                 
@@ -274,7 +293,7 @@ function init(){
 
 
     //Función para agregar data de WFS a mapa y layer control.
-    var WFSLayerGroup;
+    
     function addWFSData (WFSData, layerName){
         WFSLayer = L.geoJSON(WFSData,{
             /*coordsToLatLng: function(coords){
@@ -295,7 +314,7 @@ function init(){
         console.log(currentZoom)       
         layerControl.addOverlay(WFSLayer, layerName)
         configureSearchControl()
-        WFSLayerGroup = L.layerGroup([WFSLayer]);
+        //WFSLayerGroup = L.layerGroup([WFSLayer]);
        
     }
 
@@ -306,7 +325,10 @@ function init(){
 
     fetchWFSData(urlWFSRedGeodesica,"Red Geodésica")
     
-    
+    function handleButtonClick(){
+        console.log("handle")
+        findNearestVertex(coordinateGeographicDblClick);
+    }
    
    /* map.on("click", function(e){
         console.log(proj4(crsUTM84,[e.latlng.lng,e.latlng.lat]))
@@ -314,22 +336,39 @@ function init(){
 
     //Función para crear marker con evento de doble click en el mapa
 
-    var popupUbicacionProyecto 
-    var markerDblClick = null;
+    
+    //var popupUbicacionProyecto 
+    var markerDblClick;
     var markerData
+    var coordinateGeographicDblClick 
+
     map.on("dblclick", function(e){
+
+        // Crear el botón
+        var button = document.createElement('button');
+        button.id = "button-vertice-cercano";
+        button.className = "btn btn-primary";
+        button.type = "button";
+        button.textContent = "Vértice más cercano";
+
+        // Asignar el evento de clic al botón
+        button.addEventListener("click", handleButtonClick);
        
-        if (markerDblClick && markerDblClick.getLatLng()){
-            markerDblClick.remove()
+        if (markerDblClick ){
+            markerDblClick.off('popupopen'); // Eliminar el evento asociado al abrir el popup
+            markerDblClick.off('popupclose'); // Eliminar el evento asociado al cerrar el popup
+            markerDblClick.remove(); // Eliminar el marcador del mapa
+            markerDblClick = null; // Limpiar la referencia al marcador
+            
         }
         
-        
-        var coordinateGeographicDblClick = e.latlng
+        coordinateGeographicDblClick = e.latlng
         markerData={
             title:"Ubicación del Proyecto",
             ubicacion: `<b>Lat:</b>${coordinateGeographicDblClick.lat} <b>Long:</b>${coordinateGeographicDblClick.lng}`
         }
-        popupUbicacionProyecto = `
+        var popupUbicacionProyecto = document.createElement('div');
+        popupUbicacionProyecto.innerHTML= `
         <div>
             
             <div id="popupUbicacionProyecto">
@@ -338,23 +377,20 @@ function init(){
             <p>${markerData.ubicacion}</p>
             
             <div id="button-separator">
-            <button id="button-vertice-cercano" type="button" class="btn btn-primary">Vértice más cercano</button>
+            
             </div>
         </div>`;
-       
-            
+        popupUbicacionProyecto.querySelector('#button-separator').appendChild(button);
+         
         
         markerDblClick = L.marker(coordinateGeographicDblClick)
-        markerDblClick.bindPopup(popupUbicacionProyecto).addTo(map)
+        markerDblClick.bindPopup(popupUbicacionProyecto)
+        markerDblClick.addTo(map)
         markerDblClick.openPopup()
-        var buttonVerticeMasCercano = document.getElementById("button-vertice-cercano")
-        buttonVerticeMasCercano.addEventListener("click", function(){
-            findNearestVertex(coordinateGeographicDblClick)
-        } )
         
-    })
-
-     // search para buscar en capas de vértices
+                })
+        
+    // search para buscar en capas de vértices
     var circleLocationFound
     var zoomToShowTooltip = 18
     var markerLocationFound
@@ -373,11 +409,15 @@ function init(){
             map.addControl(controlSearch)
 
             controlSearch.on('search:locationfound', function(e){
+                if(circleLocationFound){
+                    circleLocationFound.remove()
+                    markerLocationFound.remove()
+                }
                 let latLocationFound=e.layer._latlng.lat
                 let lngLocationFound=e.layer._latlng.lng
                 markerLocationFound = L.marker([latLocationFound,lngLocationFound],{icon:L.divIcon({className:'marker-transparent'})})
                 var textLocationFound = `<b>${e.text}</b>`
-                console.log(e)
+                
                 circleLocationFound = L.circle([latLocationFound,lngLocationFound], {radius:100})
                 markerLocationFound.addTo(map)
                 markerLocationFound.bindTooltip(textLocationFound,{ permanent: true, className: "map-label", offset: [20, 0] }).openTooltip()
@@ -390,31 +430,35 @@ function init(){
         }
     }
     map.on('moveend', function(){
+        
         if(circleLocationFound){
             let boundsNow= map.getBounds();
         
             if(!boundsNow.contains(circleLocationFound.getLatLng())){
                 circleLocationFound.remove()
-                markerLocationFound.unbindTooltip()
-                markerLocationFound.remove()
+                
+               
+                if (markerLocationFound){
+                    markerLocationFound.unbindTooltip()
+                    markerLocationFound.remove()
+                }
+                
+            }
+        } if (vertexLocationFound){
+            let boundsNow= map.getBounds();
+            
+            if(!boundsNow.contains(vertexLocationFound.getLatLng())){
+                vertexLocationFound.remove()
+                if (markerVertexLocationFound){
+                    markerVertexLocationFound.unbindTooltip()
+                    markerVertexLocationFound.remove()
+                }
             }
         }
 
-    /*map.on('zoomend', function (e){
-        var currentZoom = map.getZoom()
+  }
         
-        if(currentZoom >=zoomToShowTooltip){
-            console.log("hola")
-            WFSLayer.eachLayer(function(layer){
-                
-                var namePoint = layer.properties 
-                console.log(layer)
-                layer.bindTooltip("hola",{ permanent: true, className: "map-label", offset: [0, 0] }).openTooltip()
-            })
-        }
-    })*/
-        
-    })
+    )
     
     
    /* map.on("click", function (e){
