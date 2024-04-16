@@ -146,11 +146,17 @@ function init(){
         map.on('locationfound', buscarLocalizacion);
         map.locate({});
 
-    function findNearestVertex(latlng){
-        
+
+   // FUNCION DE VERTICE MAS CERCANO
+    function findNearestVertex(coord) {
+        var puntoMasCercano = L.GeometryUtil.closestLayer(map, WFSLayer.getLayers(), coord)
+        circleLocationFound = L.circle(puntoMasCercano.latlng, {radius:100})
+        console.log(puntoMasCercano)
+        circleLocationFound.addTo(map)
+        map.flyTo(puntoMasCercano.latlng, 17)
+
     }
    
-    L.circle([-33.40624369822614,-70.37833611106949],{radius:200}).addTo(map)
 
     L.Routing.control({
         waypoints: [
@@ -166,7 +172,7 @@ function init(){
                         {color: 'blue', opacity: 0.5, weight: 2}
 ]
                   },
-      }).addTo(map);
+      })//.addTo(map);
 
     // FUNCTION TRAER INFO WFS RED GEODESICA
 
@@ -268,7 +274,7 @@ function init(){
 
 
     //Función para agregar data de WFS a mapa y layer control.
-    
+    var WFSLayerGroup;
     function addWFSData (WFSData, layerName){
         WFSLayer = L.geoJSON(WFSData,{
             /*coordsToLatLng: function(coords){
@@ -289,6 +295,7 @@ function init(){
         console.log(currentZoom)       
         layerControl.addOverlay(WFSLayer, layerName)
         configureSearchControl()
+        WFSLayerGroup = L.layerGroup([WFSLayer]);
        
     }
 
@@ -331,13 +338,19 @@ function init(){
             <p>${markerData.ubicacion}</p>
             
             <div id="button-separator">
-            <button  type="button" class="btn btn-primary">Vértice más cercano</button>
+            <button id="button-vertice-cercano" type="button" class="btn btn-primary">Vértice más cercano</button>
             </div>
         </div>`;
-        //console.log(markerData)
+       
+            
+        
         markerDblClick = L.marker(coordinateGeographicDblClick)
         markerDblClick.bindPopup(popupUbicacionProyecto).addTo(map)
         markerDblClick.openPopup()
+        var buttonVerticeMasCercano = document.getElementById("button-vertice-cercano")
+        buttonVerticeMasCercano.addEventListener("click", function(){
+            findNearestVertex(coordinateGeographicDblClick)
+        } )
         
     })
 
@@ -402,6 +415,15 @@ function init(){
     })*/
         
     })
+    
+    
+   /* map.on("click", function (e){
+        var puntoMasCercano = L.GeometryUtil.closestLayer(map, WFSLayer.getLayers(), e.latlng)
+        console.log(WFSLayer.getLayers())
+        console.log(puntoMasCercano.latlng)
+
+        map.flyTo(puntoMasCercano.latlng, 18)
+    })*/
     
      
    
