@@ -118,13 +118,18 @@ function init(){
     
    
 
-    function monoDisplay(){
+    function monoDisplay(feature){
         {
             
             var mono = document.getElementById("mono");
+            var imagenMono = document.getElementById("monografia-vertice")
             
             if (mono.style.display === "none" || mono.style.display ==="") {
                 mono.style.display = "inline-block";
+                console.log(imagenMono)
+                imagenMono.setAttribute("src","./imagenes/monografias/"+ feature.properties.nombre_punto + ".jpeg") 
+                //mono = mono.replace("ruta", feature.properties.nombre_punto+".jpeg");
+                console.log(mono,feature.properties.nombre_punto )
                 
                 
             } else {
@@ -272,7 +277,8 @@ function init(){
                 
                     var toggleButton = document.getElementById("toggleButton")
             
-                    toggleButton.addEventListener("click", monoDisplay);
+                    toggleButton.addEventListener("click", function(){
+                        monoDisplay(feature)});
             
                 
                 
