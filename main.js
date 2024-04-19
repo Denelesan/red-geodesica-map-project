@@ -125,16 +125,21 @@ function init(){
             var imagenMono = document.getElementById("monografia-vertice")
             
             if (mono.style.display === "none" || mono.style.display ==="") {
+                mono.style.opacity = "1";
                 mono.style.display = "inline-block";
-                console.log(imagenMono)
-                imagenMono.setAttribute("src","./imagenes/monografias/"+ feature.properties.nombre_punto + ".jpeg") 
+                
+                imagenMono.setAttribute("src","./imagenes/monografias/"+ feature.properties.nombre_punto + ".jpg") 
                 //mono = mono.replace("ruta", feature.properties.nombre_punto+".jpeg");
                 console.log(mono,feature.properties.nombre_punto )
                 
                 
             } else {
                 //map.style.display = "none";
-                mono.style.display = "none";
+                mono.style.opacity = "0"; // Ocultar suavemente la ventana emergente
+                setTimeout(function() {
+                    mono.style.display = "none";
+                }, 300); // Esperar a que termine la transición antes de ocultar definitivamente la ventana emergente
+            
                 
             }
         }

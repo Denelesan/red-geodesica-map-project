@@ -16,7 +16,7 @@ header{
     height: 10vh;
     width: 100vw;
     margin-top: 0;
-    background-color: blue;
+    background-color:blanchedalmond;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -43,17 +43,11 @@ main{
 
 #mono {
     
-    width: 30vw;
+    width: 50vw;
     background-color: aqua;
-    
-    justify-content: center;
-    align-items: center;
     display: none; /* Comienza oculto */ 
-    
-}
-
-.leaflet-popup-content-wrapper{
-    
+    opacity: 0; /* Comienza con opacidad cero */
+    transition: opacity 0.3s ease; /* Agrega una transición suave de opacidad */
 }
 
 #atributeTable{
@@ -82,3 +76,8 @@ main{
 .marker-transparent{
     opacity: 0;
 }
+
+#monografia-vertice{
+    height: 100%;
+}
+
