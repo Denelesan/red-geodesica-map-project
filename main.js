@@ -124,24 +124,15 @@ function init(){
             var mono = document.getElementById("mono");
             var imagenMono = document.getElementById("monografia-vertice")
             
-            if (mono.style.display === "none" || mono.style.display ==="") {
-                mono.style.opacity = "1";
-                mono.style.display = "inline-block";
-                
-                imagenMono.setAttribute("src","./imagenes/monografias/"+ feature.properties.nombre_punto + ".jpg") 
-                //mono = mono.replace("ruta", feature.properties.nombre_punto+".jpeg");
-                console.log(mono,feature.properties.nombre_punto )
-                
-                
+            if (mono.classList.contains("visibility")) {
+                mono.classList.remove("visibility");
+                mono.classList.add("hidden");
             } else {
-                //map.style.display = "none";
-                mono.style.opacity = "0"; // Ocultar suavemente la ventana emergente
-                setTimeout(function() {
-                    mono.style.display = "none";
-                }, 300); // Esperar a que termine la transición antes de ocultar definitivamente la ventana emergente
-            
-                
+                mono.classList.remove("hidden");
+                mono.classList.add("visibility");
+                imagenMono.setAttribute("src", "./imagenes/monografias/" + feature.properties.nombre_punto + ".jpg");
             }
+        
         }
     }
 

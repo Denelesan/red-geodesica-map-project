@@ -27,8 +27,6 @@ main{
     height: 90vh;
     width: 100vw;
     display: flex;
-    
-    
 }
 
 #map{
@@ -41,20 +39,48 @@ main{
     
 }
 
-#mono {
-    
+#mono.hidden {
     width: 50vw;
-    background-color: aqua;
-    display: none; /* Comienza oculto */ 
-    opacity: 0; /* Comienza con opacidad cero */
-    transition: opacity 0.3s ease; /* Agrega una transición suave de opacidad */
+    background-color: white;
+    animation: fade-out 3s forwards;
+    display: none;
+    opacity: 0;
+}
+
+#mono.visibility{
+    
+    animation: fade-in 3s forwards;
+}
+
+
+
+@keyframes fade-in {
+    from {
+        display: none;
+        opacity: 0;
+    }
+    to {
+        display: inline-block !important;
+        opacity: 1;
+    }
+    
+}
+@keyframes fade-out {
+    from {
+        display: inline-block !important;
+        opacity: 1;
+    }
+    to {
+        display: none !important;
+        opacity: 0;
+    }
+    
 }
 
 #atributeTable{
-   
     display: block;
-    
 }
+
 #toggleButton{
     display: block;  
 }
@@ -79,5 +105,6 @@ main{
 
 #monografia-vertice{
     height: 100%;
+    
 }
 
