@@ -12,15 +12,22 @@ body {
 
 }
 
-header{
-    height: 10vh;
+.banner{
+   
+    height: 8vh;
     width: 100vw;
     margin-top: 0;
     background-color:blanchedalmond;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display:inline-block;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  
     
+}
+
+#imagen-banner{
+height: 100%;
+width: 100vw;
 }
 
 main{
@@ -42,17 +49,18 @@ main{
 .hidden {
     width: 0vw;
     background-color: white;
-   
+    
     
     /* animation: fade-out 3s forwards;
-    display: none;
-    opacity: 0; */
+    opacity: 0
+    ; */
 }
 
 .visibility{
     
     /* animation: fade-in 3s forwards; */
-    width: 50vw;
+    width: 45rem;
+    position: static;
    
 }
 
@@ -119,5 +127,10 @@ main{
     
     /* min-width: 90%; */
     
+}
+
+.search-input{
+    display: block;
+    max-width: 868px
 }
 

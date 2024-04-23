@@ -88,7 +88,12 @@ function init(){
     const layerControl = L.control.layers(baseMaps,{},{
         collapsed:true
     })
+    /*const layerRed = document.getElementsByClassName("search-input")
 
+    console.log(layerRed)
+    if(layerRed.style.display === "none"){
+        layerRed.style.display = "block" 
+    }*/
     layerControl.addTo(map)
     
     /*var searchControl = L.esri.Geocoding.geosearch({
@@ -115,24 +120,29 @@ function init(){
     })
 
     leafletControlGeocoder.addTo(map)
-    
+
     function DownloadFromUrl(fileURL, fileName) {
+        
         var link = document.createElement('a');
-        console.log("fileName:"+fileName)
+        //console.log("fileName:"+fileName)
         link.href = fileURL;
         link.download = fileName;
-        console.log("link:"+link);
+        //console.log("link:"+link);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       }  
 
+      var descargaIniciada = false;
+      var buttonDescarga = document.getElementById("button-descarga")
+      var nombrePuntoDescarga;
     function monoDisplay(feature){
         {
             
             var mono = document.getElementById("mono");
             var imagenMono = document.getElementById("monografia-vertice")
-            var buttonDescarga = document.getElementById("button-descarga")
+            
+            
             
             if (mono.classList.contains("visibility")) {
                 mono.classList.remove("visibility");
@@ -142,19 +152,33 @@ function init(){
                     {imagenMono.style.display = "none"}, 500)
                 
                 //imagenMono.classList.add("hidden")
+                descargaIniciada = true;
             } else {
                 mono.classList.remove("hidden");
-                buttonDescarga.addEventListener("click",function(){
-                    console.log("entre"),
-                    DownloadFromUrl("http://127.0.0.1:5500/imagenes/monografias/",feature.properties.nombre_punto + ".jpg")
-                }
-                
-                )
-                //imagenMono.classList.remove("hidden");
                 mono.classList.add("visibility");
-                imagenMono.style.display = "inline-block"
+                imagenMono.style.display = "inline-block";
+                  //imagenMono.classList.remove("hidden");
+                 
+                 nombrePuntoDescarga = feature.properties.nombre_punto; 
+                  if(!descargaIniciada){
+                    buttonDescarga.addEventListener("click",function(){
+                               
+                        DownloadFromUrl("./imagenes/monografias/"+nombrePuntoDescarga + ".jpg",nombrePuntoDescarga + ".jpg")
+                        descargaIniciada=true;
+                        
+                    }
+                    
+                    )     
+                  } else{
+                    console.log("La descarga ya se inició anteriormente")
+                  }
+                       
+                
+                
                 //imagenMono.classList.add("visibility");
                 imagenMono.setAttribute("src", "./imagenes/monografias/" + feature.properties.nombre_punto + ".jpg");
+                
+              
             }
         
         }
