@@ -116,20 +116,44 @@ function init(){
 
     leafletControlGeocoder.addTo(map)
     
-   
+    function DownloadFromUrl(fileURL, fileName) {
+        var link = document.createElement('a');
+        console.log("fileName:"+fileName)
+        link.href = fileURL;
+        link.download = fileName;
+        console.log("link:"+link);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }  
 
     function monoDisplay(feature){
         {
             
             var mono = document.getElementById("mono");
             var imagenMono = document.getElementById("monografia-vertice")
+            var buttonDescarga = document.getElementById("button-descarga")
             
             if (mono.classList.contains("visibility")) {
                 mono.classList.remove("visibility");
+                //imagenMono.classList.remove("visibility");
                 mono.classList.add("hidden");
+                setTimeout(function()
+                    {imagenMono.style.display = "none"}, 500)
+                
+                //imagenMono.classList.add("hidden")
             } else {
                 mono.classList.remove("hidden");
+                buttonDescarga.addEventListener("click",function(){
+                    console.log("entre"),
+                    DownloadFromUrl("http://127.0.0.1:5500/imagenes/monografias/",feature.properties.nombre_punto + ".jpg")
+                }
+                
+                )
+                //imagenMono.classList.remove("hidden");
                 mono.classList.add("visibility");
+                imagenMono.style.display = "inline-block"
+                //imagenMono.classList.add("visibility");
                 imagenMono.setAttribute("src", "./imagenes/monografias/" + feature.properties.nombre_punto + ".jpg");
             }
         
@@ -273,7 +297,7 @@ function init(){
                 
                     var toggleButton = document.getElementById("toggleButton")
             
-                    toggleButton.addEventListener("click", function(){
+                toggleButton.addEventListener("click", function(){
                         monoDisplay(feature)});
             
                 
@@ -286,6 +310,12 @@ function init(){
                     })
                 })
                 
+                map.on("click", function(e){
+                    if(mono.classList.contains("visibility")){
+                        monoDisplay()
+                    }
+                })
+
                 .catch (error =>{
                     console.log("Error", error)
                 })
