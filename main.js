@@ -35,10 +35,10 @@ function init(){
         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     })
 
-    var smoothDarkMap = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}', {
+    var smoothDarkMap = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}?api_key=65bf92e4-95a1-4289-8179-c02b5ce4d6ff', {
         minZoom: 0,
         maxZoom: 20,
-        
+        authorization: 'Stadia-Auth 65bf92e4-95a1-4289-8179-c02b5ce4d6ff',
         attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         ext: 'png'
     });
@@ -47,6 +47,12 @@ function init(){
         
         attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     });
+
+    var positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                            subdomains: 'abcd',
+                            maxZoom: 20
+                        });
 
     // Main Function
 
@@ -57,7 +63,7 @@ function init(){
         zoom: 10,
         continuousWorld:true,
         worlCopyJump:false,
-        layers: smoothDarkMap,
+        layers: positron,
         //crs: crs32719
     })
     map.doubleClickZoom.disable()
@@ -79,9 +85,10 @@ function init(){
     L.control.scale().addTo(map);
 
     const baseMaps = {
-        "<b>Smooth Dark Map</b>": smoothDarkMap,
+        "<b>CartoDB Positron</b>": positron,
         "OpenStreetMap": openStreetMap,
-        "World Imagery Map": worldImageryMap
+        "World Imagery Map": worldImageryMap,
+        "Smooth Dark Map": smoothDarkMap,
 
     }
 
